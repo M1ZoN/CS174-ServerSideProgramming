@@ -9,31 +9,17 @@
 					<input type='submit' value='Upload'>
 				</form>
 _END;
-
 	function validator($input)
 	{
 		$pattern = '/^[0-9]*$/';
 		return (preg_match($pattern, $input));
 	}
 
-	function isOk($input)
-	{
-		$ok = ((count($input) === 20) ? 1 : 0);
-		echo "$ok<br>";
-		for($i = 0;$ok && $i < count($input); $i++)
-		{
-			echo "$ok<br>";
-			if (count($input) !== 20)
-				$ok = 0;
-		}
-		return ($ok);
-	}
-
 	function getArray($input)
 	{
 		$res = array(array());
 		$rowSize = 20;
-		$colSize = 50;
+		$colSize = 20;
 		$k = 0;
 		for ($i = 0; $i < $rowSize; $i++)
 		{
@@ -88,7 +74,7 @@ _END;
 					$res = $mult;
 			}
 		}
-		for ($i = 0; $i < (count($input) -4); $i++)
+		for ($i = 0; $i < (count($input) - 4); $i++)
 		{
 			for($j = (count($input[$i]) - 5); $j >= 0; $j--)
 			{
@@ -110,21 +96,17 @@ _END;
 
 	function getMax($filename)
 	{
-		$fh = fopen("$filename", "r") or
+		$fh = fopen($filename, "r") or
 				die("File does not exist or there is no permission to read it!");
-		$input = fread($fh, 1000);
-		if (validator($input))
+		$input = fread($fh, 400);
+		$fsize = filesize($filename);
+		if ($fsize == 401 && validator($input))
 		{
 			$arrInput = getArray($input);
-			if (!isOk($arrInput))
-			{
-				echo "Wrong count of numbers! Has to be equal to 400<br>";
-				return ;
-			}
 			$arrMax = max(Horizontal($arrInput), Vertical($arrInput), Diagonal($arrInput));
-			echo "The biggest sum of 5 adjacent numbers = $arrMax<br>";
+			echo "The biggest sum of 4 adjacent numbers = $arrMax<br>";
 			$sz = strval($arrMax);
-			$factProd = 1;
+			$factProd = 0;
 			for($sz = strlen(strval($arrMax)) - 1; $sz >= 0; $sz--)
 			{
 				$factProd += factorial($arrMax / pow(10, $sz) % 10);
@@ -133,11 +115,9 @@ _END;
 		}
 		else
 		{
-			echo "Wrong Input! Digit only program.";
+			echo "Wrong Input! Digit only program or incorrect number of characters.<br>";
 		}
 		fclose($fh);
 	}
-
 	getMax($_FILES['file']['tmp_name']);
-
 	echo"</body></html>";
