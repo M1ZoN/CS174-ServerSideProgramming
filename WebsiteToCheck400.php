@@ -116,7 +116,7 @@ _END;
 		if (validator($input))
 		{
 			$arrInput = getArray($input);
-			if (!checkArr($arrInput))
+			if (!isOk($arrInput))
 			{
 				echo "Wrong count of numbers! Has to be equal to 400<br>";
 				return ;
